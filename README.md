@@ -5,10 +5,15 @@ Raizare é o encontro entre a força da raiz, que sustenta a vida no campo, e a 
 O Raizare é muito mais que um software: é uma plataforma completa de gestão agrícola, desenvolvida para simplificar a vida do produtor e transformar dados em decisões inteligentes.
 
 Com ele, é possível:
+
 📦 Controlar o estoque de insumos (sementes, fertilizantes, defensivos, entre outros) em tempo real, evitando desperdícios e garantindo eficiência.
+
 📊 Registrar e organizar gastos, calculando custos por área e por safra de forma clara e detalhada.
+
 💰 Calcular lucros e rentabilidade, com dashboards e relatórios intuitivos que mostram onde sua produção pode ser otimizada.
+
 📝 Planejar o futuro da safra, tomando decisões estratégicas baseadas em informações precisas e confiáveis.
+
 🔍 Monitorar a produtividade e gerar insights para aumentar o desempenho sem perder o controle financeiro.
 
 💡 O Raizare nasceu para unir tradição e inovação, trazendo a essência do campo e a solidez das raízes para uma gestão moderna, prática e inteligente. É o parceiro que cada produtor precisa para transformar informação em resultados reais e levar sua produção para o próximo nível.
