@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://br.pinterest.com/pin/5559199537519469/" width="300" alt="Raizare Logo">
+  <img src="https://imgur.com/a/gkryk1d" width="300" alt="Raizare Logo">
 </p>
 
 <p align="center">
