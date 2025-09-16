@@ -1,6 +1,5 @@
 🌱 Raizare — crescendo da raiz para o futuro
 
-
 Raizare é o encontro entre a força da raiz, que sustenta a vida no campo, e a energia da inovação, que transforma o futuro da agricultura. Um nome que simboliza crescimento, solidez e tecnologia, pensado para produtores que desejam controlar cada detalhe de sua produção e maximizar resultados.
 
 
