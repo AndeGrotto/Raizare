@@ -11,9 +11,11 @@ class ProdutoController extends Controller
 {
     public function index()
     {
-        $produtos = Produto::orderByDesc('id')->get();
 
-        return Inertia::render('Produtos/Index', compact('produtos'));
+        /*$produtos = Produto::orderByDesc('id')->get();
+        return Inertia::render('Produtos/Index', compact('produtos'));*/
+        $produtos = Produto::all();
+    return Inertia::render('Produtos/Index', ['produtos' => $produtos]);
     }
 
     public function create()
