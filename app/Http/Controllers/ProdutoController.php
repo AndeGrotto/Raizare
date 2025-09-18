@@ -15,11 +15,16 @@ class ProdutoController extends Controller
         /*$produtos = Produto::orderByDesc('id')->get();
         return Inertia::render('Produtos/Index', compact('produtos'));*/
         $produtos = Produto::all();
-    return Inertia::render('Produtos/Index', ['produtos' => $produtos]);
+        return Inertia::render('Produtos/Index', ['produtos' => $produtos]);
     }
 
     public function create()
     {
+        $produtos = Produto::all();
+        return Inertia::render('Produtos/Create', [
+            'produtos' => $produtos,
+        ]);
+
         // Lista distinta de nomes cadastrados para select
         $nomes = Produto::select('nome')->distinct()->pluck('nome');
 
@@ -30,39 +35,42 @@ class ProdutoController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'nome' => 'required|string|max:255',
-            'tipo' => 'nullable|string|max:255',
-            'quantidade_total' => 'required|integer|min:0',
-            'preco_unitario' => 'required|numeric|min:0',
-            'preco_total' => 'required|numeric|min:0',
+        $request->validate([
+            'nome' => 'required|string',
+            'tipo' => 'required|string',
+            'quantidade_total' => 'required|numeric|min:0',
+            'preco_unitario' => 'nullable|numeric|min:0',
+            'preco_total' => 'nullable|numeric|min:0',
         ]);
 
-        // Procurar produto existente nome + tipo iguais
-        $produto = Produto::where('nome', $data['nome'])
-            ->where('tipo', $data['tipo'])
+        $produtoExistente = Produto::where('nome', $request->nome)
+            ->where('tipo', $request->tipo)
             ->first();
 
-        if ($produto) {
-            // Atualiza quantidade e preço total
-            $produto->quantidade_total += $data['quantidade_total'];
-
-            // Atualiza preco total somando
-            $produto->preco_total += $data['preco_total'];
-
-            // Recalcula preco unitário médio (preco_total dividido quantidade_total)
-            if ($produto->quantidade_total > 0) {
-                $produto->preco_unitario = $produto->preco_total / $produto->quantidade_total;
-            } else {
-                $produto->preco_unitario = 0;
+        if ($produtoExistente) {
+            $produtoExistente->quantidade_total += $request->quantidade_total;
+            if ($request->preco_unitario) {
+                $produtoExistente->preco_unitario = $request->preco_unitario;
+                $produtoExistente->preco_total = $produtoExistente->quantidade_total * $request->preco_unitario;
+            } elseif ($request->preco_total) {
+                $produtoExistente->preco_total = $request->preco_total;
+                $produtoExistente->preco_unitario = $produtoExistente->preco_total / $produtoExistente->quantidade_total;
             }
-            $produto->save();
+            $produtoExistente->save();
         } else {
-            Produto::create($data);
+            Produto::create([
+                'nome' => $request->nome,
+                'tipo' => $request->tipo,
+                'quantidade_total' => $request->quantidade_total,
+                'preco_unitario' => $request->preco_unitario ?? 0,
+                'preco_total' => $request->preco_total ?? ($request->preco_unitario * $request->quantidade_total),
+            ]);
         }
 
-        return redirect()->route('produtos.index');
+        return redirect()->route('produtos.index')->with('success', 'Produto salvo com sucesso!');
     }
+
+
 
 
     public function edit(Produto $produto)
@@ -118,7 +126,6 @@ class ProdutoController extends Controller
     public function destroy(Produto $produto)
     {
         $produto->delete();
-
-        return redirect()->route('produtos.index');
+        return redirect()->route('produtos.index')->with('success', 'Produto excluído com sucesso.');
     }
 }
