@@ -3,7 +3,7 @@ import { usePage, Link, Head } from "@inertiajs/react";
 import { Inertia } from "@inertiajs/inertia";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-const TIPOS_FIXOS = ["Soja", "Milho", "Adubo", "Agrotóxico", "Outro"];
+export const TIPOS_FIXOS = ["Soja", "Milho", "Adubo", "Agrotóxico", "Outro"];
 
 export default function Create() {
   // Fallbacks seguros para evitar erros quando props ainda não chegaram
@@ -14,6 +14,9 @@ export default function Create() {
   const tipos = TIPOS_FIXOS;
 
   const [modoNovoNome, setModoNovoNome] = useState(false);
+  const inputNovoRef = useRef(null);
+  const [tipoDetectado, setTipoDetectado] = useState(false);
+  const [calcTotalAtivo, setCalcTotalAtivo] = useState(true);
 
   // Estado do formulário
   const [data, setData] = useState({
@@ -80,16 +83,21 @@ export default function Create() {
 
     const next = {};
 
+    // 1) Usuário está editando preço unitário => recalcula total
     if (editing === "preco_unitario") {
       if (isFinite(pu) && pu > 0) {
         const newPT = (qt * pu).toFixed(2);
         if (data.preco_total !== newPT) next.preco_total = newPT;
       }
+
+      // 2) Usuário está editando preço total => recalcula unitário
     } else if (editing === "preco_total") {
       if (isFinite(pt) && pt > 0) {
         const newPU = (pt / qt).toFixed(2);
         if (data.preco_unitario !== newPU) next.preco_unitario = newPU;
       }
+
+      // 3) Usuário está editando quantidade => tenta manter coerência usando quem existe
     } else if (editing === "quantidade_total") {
       if (isFinite(pu) && pu > 0) {
         const newPT = (qt * pu).toFixed(2);
@@ -98,7 +106,9 @@ export default function Create() {
         const newPU = (pt / qt).toFixed(2);
         if (data.preco_unitario !== newPU) next.preco_unitario = newPU;
       }
-    } else {
+
+      // 4) Modo automático (ninguém está editando agora)
+    } else if (calcTotalAtivo) {
       if (isFinite(pu) && pu > 0 && (!isFinite(pt) || pt <= 0)) {
         const newPT = (qt * pu).toFixed(2);
         if (data.preco_total !== newPT) next.preco_total = newPT;
@@ -113,7 +123,8 @@ export default function Create() {
       setData(prev => ({ ...prev, ...next }));
       queueMicrotask(() => { computingRef.current = false; });
     }
-  }, [data.quantidade_total, data.preco_unitario, data.preco_total, editing]);
+  }, [data.quantidade_total, data.preco_unitario, data.preco_total, editing, calcTotalAtivo]);
+
 
 
   function submit(e) {
@@ -188,16 +199,16 @@ export default function Create() {
       <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-6">
         <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
           <form onSubmit={submit} className="space-y-6">
-            {/* Nome (responsivo 20/80) */}
+            {/* Nome do produto */}
             <div>
               <label className="block font-medium text-sm text-gray-700 dark:text-gray-300">
                 Nome do produto
               </label>
 
-              {/* linha responsiva */}
-              <div className="grid grid-cols-1 md:grid-cols-5 gap-3 mt-1">
-                {/* Select (20%) — desabilitado quando estiver criando novo */}
-                <div className="md:col-span-2">
+              {/* Linha responsiva: mobile empilha, md lado a lado (40% / 60%) */}
+              <div className="mt-1 grid grid-cols-1 md:grid-cols-5 lg:grid-cols-6 gap-3 md:gap-4">
+                {/* Select (md: 2 colunas) — desabilita no modo 'Cadastrar novo' */}
+                <div className="md:col-span-2 lg:col-span-2">
                   <select
                     id="nome"
                     name="nome"
@@ -209,42 +220,61 @@ export default function Create() {
                       setData(prev => ({
                         ...prev,
                         nome: nomeSel,
-                        ...(nomeSel ? { nome_texto: nomeSel } : {}),
+                        nome_texto: nomeSel, // espelha no campo principal
                         ...(tipoConhecido ? { tipo: tipoConhecido } : {}),
                       }));
+                      if (tipoConhecido) {
+                        setTipoDetectado(true);
+                        setTimeout(() => setTipoDetectado(false), 2500);
+                      }
                     }}
-                    className={`mt-1 block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm ${modoNovoNome ? "opacity-60 cursor-not-allowed" : ""}`}
+                    className={`block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm ${modoNovoNome ? "opacity-60 cursor-not-allowed" : ""}`}
                   >
                     <option value="">Selecione um nome</option>
                     {nomes.map(n => <option key={n} value={n}>{n}</option>)}
                   </select>
                 </div>
 
-                {/* Input (80%) — aparece e habilita no modo novo */}
-                <div className="md:col-span-3">
+                {/* Input principal (md: 3 colunas) — habilita no modo 'Cadastrar novo' */}
+                <div className="md:col-span-3 lg:col-span-4">
                   <input
+                    ref={inputNovoRef}
                     id="nome_texto"
                     name="nome_texto"
                     type="text"
-                    placeholder="Ou cadastre um novo nome"
+                    placeholder="Digite ou cadastre um novo nome"
                     disabled={!modoNovoNome}
                     value={data.nome_texto || ""}
-                    onChange={(e) => setData(prev => ({ ...prev, nome_texto: e.target.value }))}
-                    className={`mt-1 block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm ${!modoNovoNome ? "opacity-60 cursor-not-allowed" : ""}`}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setData(prev => ({ ...prev, nome_texto: v, nome: v }));
+                      const t = nomeParaTipo.get(v);
+                      if (t) {
+                        setData(prev => ({ ...prev, tipo: t }));
+                        setTipoDetectado(true);
+                        setTimeout(() => setTipoDetectado(false), 2500);
+                      }
+                    }}
+                    onBlur={() => {
+                      // normalização leve ao sair do campo
+                      const v = (data.nome_texto || "").trim().replace(/\s+/g, " ");
+                      if (v !== (data.nome_texto || "")) {
+                        setData(prev => ({ ...prev, nome_texto: v, nome: v }));
+                      }
+                    }}
+                    className={`block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-sm ${!modoNovoNome ? "opacity-60 cursor-not-allowed" : ""}`}
                   />
                 </div>
               </div>
 
-              {/* Controles contextuais */}
+              {/* Controles de modo */}
               <div className="mt-2 flex gap-2">
                 <button
                   type="button"
-                  onClick={() => {
-                    setModoNovoNome(false);
-                    // Se havia texto digitado mas vai voltar para select, mantém coerência
-                    // opcional: limpar nome_texto quando sair do modo novo
-                  }}
-                  className={`px-3 py-1 rounded-md text-sm border ${!modoNovoNome ? "bg-indigo-600 text-white border-transparent" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white border-gray-300"}`}
+                  onClick={() => { setModoNovoNome(false); }}
+                  className={`px-3 py-1.5 rounded-md text-sm border transition
+        ${!modoNovoNome ? "bg-indigo-600 text-white border-transparent hover:bg-indigo-700"
+                      : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white border-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"}`}
                 >
                   Selecionar existente
                 </button>
@@ -253,25 +283,39 @@ export default function Create() {
                   type="button"
                   onClick={() => {
                     setModoNovoNome(true);
-                    // ao entrar no modo novo, opcionalmente limpar o select
                     setData(prev => ({ ...prev, nome: "" }));
+                    setTimeout(() => inputNovoRef.current?.focus(), 0);
                   }}
-                  className={`px-3 py-1 rounded-md text-sm border ${modoNovoNome ? "bg-indigo-600 text-white border-transparent" : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white border-gray-300"}`}
+                  className={`px-3 py-1.5 rounded-md text-sm border transition
+        ${modoNovoNome ? "bg-indigo-600 text-white border-transparent hover:bg-indigo-700"
+                      : "bg-white dark:bg-gray-800 text-gray-700 dark:text-white border-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700"}`}
                 >
                   Cadastrar novo
                 </button>
               </div>
 
-              {/* Ajuda: espelha o input quando escolher no select e vice-versa */}
-              <p className="mt-1 text-xs text-gray-500">
-                Escolha um nome já cadastrado ou clique em “Cadastrar novo” para digitar um diferente. O tipo é preenchido automaticamente quando possível.
-              </p>
+              {/* Ajuda contextual (só quando vazio) */}
+              {!(data.nome || data.nome_texto) && (
+                <p className="mt-1 text-xs text-gray-500">
+                  Escolha um nome já cadastrado ou clique em “Cadastrar novo” para digitar um diferente.
+                </p>
+              )}
             </div>
 
 
+
             {/* Tipo */}
-            <div>
-              <label htmlFor="tipo" className="block font-medium text-sm text-gray-700 dark:text-gray-300">Tipo</label>
+            <div className="mt-4"> {/* mesmo espaçamento usado entre seções */}
+              <div className="flex items-center justify-between">
+                <label htmlFor="tipo" className="block font-medium text-sm text-gray-700 dark:text-gray-300">
+                  Tipo
+                </label>
+                {tipoDetectado && (
+                  <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-800/30 dark:text-green-200">
+                    Detectado
+                  </span>
+                )}
+              </div>
 
               <select
                 id="tipo"
@@ -288,6 +332,7 @@ export default function Create() {
 
               {errors.tipo && <div className="text-red-600 mt-1">{errors.tipo}</div>}
             </div>
+
 
             {/* Quantidade Total */}
             <div>
