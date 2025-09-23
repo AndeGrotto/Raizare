@@ -337,7 +337,7 @@ export default function Create() {
             {/* Quantidade Total */}
             <div>
               <label htmlFor="quantidade_total" className="block font-medium text-sm text-gray-700 dark:text-gray-300">
-                Quantidade Total
+                Quantidade
               </label>
 
               <input
@@ -356,78 +356,84 @@ export default function Create() {
             </div>
 
             {/* Preço Unitário */}
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-300 pointer-events-none">
-                R$
-              </span>
+            <div>
+              <label htmlFor="quantidade_total" className="block font-medium text-sm text-gray-700 dark:text-gray-300">
+                Preço Unitário
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-300 pointer-events-none">
+                  R$
+                </span>
 
-              <input
-                id="preco_unitario"
-                name="preco_unitario"
-                type="text"
-                inputMode="numeric"
-                value={editing === "preco_unitario" ? rawMoney : formatBR(data.preco_unitario)}
-                onChange={(e) => {
-                  if (computingRef.current) return;
-                  setEditing("preco_unitario");
-                  const onlyDigits = e.target.value.replace(/\D/g, "");
-                  const masked = maskFromDigits(onlyDigits);
-                  setRawMoney(masked);
-                  const parsed = brTextToDot(masked);
-                  setData(prev => ({ ...prev, preco_unitario: parsed }));
-                }}
-                onFocus={() => {
-                  setEditing("preco_unitario");
-                  const norm = normalize2dec(data.preco_unitario); // "1234567.89" ou ""
-                  setRawMoney(norm ? formatBR(norm) : "");
-                }}
-                onBlur={() => {
-                  setEditing(null);
-                  setData(prev => ({ ...prev, preco_unitario: normalize2dec(prev.preco_unitario) }));
-                  setRawMoney("");
-                }}
-                className="pl-9 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
-
-
-
+                <input
+                  id="preco_unitario"
+                  name="preco_unitario"
+                  type="text"
+                  inputMode="numeric"
+                  value={editing === "preco_unitario" ? rawMoney : formatBR(data.preco_unitario)}
+                  onChange={(e) => {
+                    if (computingRef.current) return;
+                    setEditing("preco_unitario");
+                    const onlyDigits = e.target.value.replace(/\D/g, "");
+                    const masked = maskFromDigits(onlyDigits);
+                    setRawMoney(masked);
+                    const parsed = brTextToDot(masked);
+                    setData(prev => ({ ...prev, preco_unitario: parsed }));
+                  }}
+                  onFocus={() => {
+                    setEditing("preco_unitario");
+                    const norm = normalize2dec(data.preco_unitario); // "1234567.89" ou ""
+                    setRawMoney(norm ? formatBR(norm) : "");
+                  }}
+                  onBlur={() => {
+                    setEditing(null);
+                    setData(prev => ({ ...prev, preco_unitario: normalize2dec(prev.preco_unitario) }));
+                    setRawMoney("");
+                  }}
+                  className="pl-9 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
               {errors.preco_unitario && <div className="text-red-600 mt-1">{errors.preco_unitario}</div>}
             </div>
 
             {/* Preço Total */}
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-300 pointer-events-none">
-                R$
-              </span>
+            <div>
+              <label htmlFor="quantidade_total" className="block font-medium text-sm text-gray-700 dark:text-gray-300">
+                Preço Total
+              </label>
+              <div className="relative">
+                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500 dark:text-gray-300 pointer-events-none">
+                  R$
+                </span>
 
-              <input
-                id="preco_total"
-                name="preco_total"
-                type="text"
-                inputMode="numeric"
-                value={editing === "preco_total" ? rawMoney : formatBR(data.preco_total)}
-                onChange={(e) => {
-                  if (computingRef.current) return;
-                  setEditing("preco_total");
-                  const onlyDigits = e.target.value.replace(/\D/g, "");
-                  const masked = maskFromDigits(onlyDigits);
-                  setRawMoney(masked);
-                  const parsed = brTextToDot(masked);
-                  setData(prev => ({ ...prev, preco_total: parsed }));
-                }}
-                onFocus={() => {
-                  setEditing("preco_total");
-                  const norm = normalize2dec(data.preco_total);
-                  setRawMoney(norm ? formatBR(norm) : "");
-                }}
-                onBlur={() => {
-                  setEditing(null);
-                  setData(prev => ({ ...prev, preco_total: normalize2dec(prev.preco_total) }));
-                  setRawMoney("");
-                }}
-                className="pl-9 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
-
+                <input
+                  id="preco_total"
+                  name="preco_total"
+                  type="text"
+                  inputMode="numeric"
+                  value={editing === "preco_total" ? rawMoney : formatBR(data.preco_total)}
+                  onChange={(e) => {
+                    if (computingRef.current) return;
+                    setEditing("preco_total");
+                    const onlyDigits = e.target.value.replace(/\D/g, "");
+                    const masked = maskFromDigits(onlyDigits);
+                    setRawMoney(masked);
+                    const parsed = brTextToDot(masked);
+                    setData(prev => ({ ...prev, preco_total: parsed }));
+                  }}
+                  onFocus={() => {
+                    setEditing("preco_total");
+                    const norm = normalize2dec(data.preco_total);
+                    setRawMoney(norm ? formatBR(norm) : "");
+                  }}
+                  onBlur={() => {
+                    setEditing(null);
+                    setData(prev => ({ ...prev, preco_total: normalize2dec(prev.preco_total) }));
+                    setRawMoney("");
+                  }}
+                  className="pl-9 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                />
+              </div>
 
 
               {errors.preco_total && <div className="text-red-600 mt-1">{errors.preco_total}</div>}
