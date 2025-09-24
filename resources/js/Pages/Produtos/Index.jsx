@@ -39,7 +39,7 @@ export default function Index() {
                     <th className="border border-gray-300 px-4 py-2 text-left">Nome</th>
                     <th className="border border-gray-300 px-4 py-2 text-left">Tipo</th>
                     <th className="border border-gray-300 px-4 py-2 text-left">Quantidade Total</th>
-                    <th className="border border-gray-300 px-4 py-2 text-left">Quantidade Usada</th>
+                    <th className="border border-gray-300 px-4 py-2 text-left">Quantidade Restante</th>
                     <th className="border border-gray-300 px-4 py-2 text-left">Preço Unitário</th>
                     <th className="border border-gray-300 px-4 py-2 text-left">Preço Total</th>
                     <th className="border border-gray-300 px-4 py-2 text-left">Ações</th>
@@ -52,7 +52,7 @@ export default function Index() {
                         <td className="border border-gray-300 px-4 py-2">{produto.nome}</td>
                         <td className="border border-gray-300 px-4 py-2">{produto.tipo || '-'}</td>
                         <td className="border border-gray-300 px-4 py-2">{produto.quantidade_total}</td>
-                        <td className="border border-gray-300 px-4 py-2">{produto.quantidade_usada}</td>
+                        <td className="border border-gray-300 px-4 py-2">{produto.quantidade_restante}</td>
                         <td className="border border-gray-300 px-4 py-2">{formatCurrency(produto.preco_unitario)}</td>
                         <td className="border border-gray-300 px-4 py-2">{formatCurrency(produto.preco_total)}</td>
                         <td className="border border-gray-300 px-4 py-2">

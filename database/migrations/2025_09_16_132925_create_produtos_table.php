@@ -13,12 +13,20 @@ return new class extends Migration
     {
         Schema::create('produtos', function (Blueprint $table) {
             $table->id();
-            $table->string('nome');
-            $table->string('tipo')->nullable();
-            $table->integer('quantidade_total')->default(0);
-            $table->integer('quantidade_usada')->default(0);
-            $table->decimal('preco_unitario', 10, 2)->default(0);
-            $table->decimal('preco_total', 10, 2)->default(0);
+
+            $table->string('nome');                       
+            $table->string('tipo');    
+            $table->string('unidade', 10);  
+
+            $table->decimal('quantidade_total', 15, 3)->default(0); 
+            $table->decimal('quantidade_restante', 15, 3)->default(0); 
+
+            $table->decimal('preco_unitario', 15, 2)->nullable(); 
+            $table->decimal('preco_total', 15, 2)->nullable(); 
+
+            $table->string('vendedor')->nullable();      
+            $table->date('data_compra')->nullable();   
+
             $table->timestamps();
         });
     }
@@ -28,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('produtos');
+        Schema::dropIfExists('produtos'); // rollback padrão [web:14]
     }
 };

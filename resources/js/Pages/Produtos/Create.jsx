@@ -23,6 +23,7 @@ export default function Create() {
     nome: "",
     tipo: "",
     quantidade_total: "",
+    unidade: "kg",
     preco_unitario: "",
     preco_total: "",
   });
@@ -334,25 +335,51 @@ export default function Create() {
             </div>
 
 
-            {/* Quantidade Total */}
+            {/* Quantidade + Unidade */}
             <div>
               <label htmlFor="quantidade_total" className="block font-medium text-sm text-gray-700 dark:text-gray-300">
                 Quantidade
               </label>
 
-              <input
-                id="quantidade_total"
-                name="quantidade_total"
-                type="number"
-                min="0"
-                value={data.quantidade_total}
-                onChange={handleChange}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm mt-1 block w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              />
+              <div className="mt-1 grid grid-cols-3 md:grid-cols-6 gap-3">
+                {/* Input de quantidade */}
+                <div className="col-span-2 md:col-span-4">
+                  <input
+                    id="quantidade_total"
+                    name="quantidade_total"
+                    type="number"
+                    min="0"
+                    step="0.001"
+                    value={data.quantidade_total}
+                    onChange={handleChange}
+                    onFocus={handleFocus}
+                    onBlur={handleBlur}
+                    className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    placeholder="0"
+                  />
+                  {errors.quantidade_total && (
+                    <div className="text-red-600 mt-1">{errors.quantidade_total}</div>
+                  )}
+                </div>
 
-              {errors.quantidade_total && <div className="text-red-600 mt-1">{errors.quantidade_total}</div>}
+                {/* Select de unidade */}
+                <div className="col-span-1 md:col-span-2">
+                  <select
+                    id="unidade"
+                    name="unidade"
+                    value={data.unidade || "kg"}
+                    onChange={handleChange}
+                    className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm block w-full dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    aria-label="Unidade"
+                  >
+                    <option value="kg">kg</option>
+                    <option value="g">g</option>
+                    <option value="saca">saca</option>
+                    <option value="L">L</option>
+                    <option value="ml">ml</option>
+                  </select>
+                </div>
+              </div>
             </div>
 
             {/* Preço Unitário */}
