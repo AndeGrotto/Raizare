@@ -27,7 +27,7 @@ export default function Sidebar() {
               style={{ color: '#fff', display: 'block', padding: '10px 0', textDecoration: 'none' }}
               className="hover:text-primary"
             >
-              Estoque
+              Produtos
             </Link>
           </li>
           <li>

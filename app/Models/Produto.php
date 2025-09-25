@@ -23,7 +23,12 @@ class Produto extends Model
 
 
     protected $casts = [
+        'quantidade_total'    => 'decimal:3',
+        'quantidade_restante' => 'decimal:3',
+
         'preco_unitario' => 'decimal:2',
-        'preco_total' => 'decimal:2',
+        'preco_total'    => 'decimal:2',
+
+        'data_compra' => 'date:Y-m-d',
     ];
 }

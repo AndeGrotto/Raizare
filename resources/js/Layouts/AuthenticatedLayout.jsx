@@ -34,7 +34,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                     href={route('produtos.index')}
                                     active={route().current('produtos.index')}
                                 >
-                                    Estoque
+                                    Produtos
                                 </NavLink>
                             </div>
                         </div>
