@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Inertia } from '@inertiajs/inertia';
-import ProdutoRow from './ProdutoRow';
+import ProdutoRow from '@/Components/ProdutoRow';
 
 export default function Index() {
   const { produtos, filters = {} } = usePage().props;
@@ -12,6 +12,7 @@ export default function Index() {
     tipo: filters.tipo || '',
   });
 
+  // Toast opcional (para aviso curto na página)
   const [toast, setToast] = useState(null); // 'ok' | 'err' | null
   useEffect(() => {
     if (!toast) return;
@@ -117,24 +118,14 @@ export default function Index() {
                   </thead>
                   <tbody>
                     {produtos.data.map((p) => (
-                      <tr key={p.id} className="hover">
-                        <td>{p.nome}</td>
-                        <td>{p.tipo || '-'}</td>
-                        <td className="text-right">{formatNumber(p.quantidade_total)}</td>
-                        <td className="text-right">{formatNumber(p.quantidade_restante)}</td>
-                        <td className="text-right">{formatCurrency(p.preco_unitario)}</td>
-                        <td className="text-right">{formatCurrency(p.preco_total)}</td>
-                        <td>{formatDateISOToBR(p.data_compra)}</td>
-                        <td className="text-right">
-                          <ProdutoRow
-                            p={p}
-                            formatNumber={formatNumber}
-                            formatCurrency={formatCurrency}
-                            formatDateISOToBR={formatDateISOToBR}
-                            onToast={setToast}
-                          />
-                        </td>
-                      </tr>
+                      <ProdutoRow
+                        key={p.id}
+                        p={p}
+                        onToast={setToast}
+                        formatNumber={formatNumber}
+                        formatCurrency={formatCurrency}
+                        formatDateISOToBR={formatDateISOToBR}
+                      />
                     ))}
                   </tbody>
                 </table>
@@ -150,16 +141,6 @@ export default function Index() {
                     />
                   ))}
                 </div>
-              </div>
-            )}
-            {toast === 'ok' && (
-              <div className="toast toast-end">
-                <div className="alert alert-success">Registro excluído com sucesso.</div>
-              </div>
-            )}
-            {toast === 'err' && (
-              <div className="toast toast-end">
-                <div className="alert alert-error">Falha ao excluir. Tente novamente.</div>
               </div>
             )}
           </div>

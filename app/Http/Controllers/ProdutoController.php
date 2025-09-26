@@ -78,6 +78,7 @@ class ProdutoController extends Controller
     {
         $produto->delete();
 
-        return redirect()->route('produtos.index')->with('success', 'Produto excluído com sucesso.');
+        // Não redireciona; apenas confirma que deu certo
+        return response()->noContent(); // 204
     }
 }
